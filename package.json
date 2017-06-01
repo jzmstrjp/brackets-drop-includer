@@ -1,0 +1,23 @@
+{
+	"name": "brackets-drop-includer",
+	"title": "Drop Includer",
+	"description": "[[[ SHORTCUT KEY: Ctrl + . (Cmd + .) ]]] Please drag and drop some files, and This Extension inserts tags to include files. (link tag, img tag, script tag, and php include statement)",
+	"homepage": "https://github.com/jzmstrjp/brackets-drop-includer",
+	"version": "1.0.0",
+	"keywords": ["insert", "tag", "css", "img", "link", "php", "include", "require"],
+	"author": "jzmstrjp",
+	"license": "MIT",
+	"engines": {
+		"brackets": ">=1.8.0"
+	},
+	"i18n": [
+		"en",
+		"ja"
+	],
+	"package-i18n":{
+		"ja":{
+			"description": "ファイルをドラッグ&ドロップするとCSSのlinkタグやJavascriptのscriptタグ、imgタグ等を挿入します。phpファイルならincludeします。相対パスとルートパスが選べます。「Ctrl + .」(Cmd + .)キーを押すとウィンドウが開きます。",
+			"title": "インクルードし太郎"
+		}
+	}
+}
