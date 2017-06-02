@@ -19,7 +19,14 @@ define(function(require, exports, module) {
 	var currentDoc,
 		editor;
 
-	var dropZone;
+	var dropZone,
+		x,
+		y,
+		dragMode = false;
+
+	var dropZoneStyle,
+		dropZoneX,
+		dropZoneY;
 
 
 	ExtensionUtils.loadStyleSheet(module, "main.less");
@@ -37,7 +44,29 @@ define(function(require, exports, module) {
 	}
 
 
-
+	function drag_and_move(){
+		dropZone.addEventListener("mousedown", function(e){
+			dragMode = true;
+			x = e.clientX;
+			y = e.clientY;
+			dropZoneStyle = window.getComputedStyle(dropZone);
+			dropZoneX = parseFloat(dropZoneStyle.left);
+			dropZoneY = parseFloat(dropZoneStyle.top);
+		});
+		dropZone.addEventListener("mouseup", function(){
+			dragMode = false;
+		});
+		dropZone.addEventListener("mousemove", function(e){
+			if(dragMode){
+				
+				var plusX = e.clientX - x;
+				var plusY = e.clientY - y;
+				dropZone.style.left = dropZoneX + plusX + "px";
+				dropZone.style.top = dropZoneY + plusY + "px";
+				
+			}
+		});
+	}
 
 
 	/*****************************
@@ -55,6 +84,8 @@ define(function(require, exports, module) {
 		document.getElementById("tagInserterClose").addEventListener("click", function(){
 			dropZone.style.display = "none";
 		});
+
+		drag_and_move();
 	}
 
 	function openDialog(){

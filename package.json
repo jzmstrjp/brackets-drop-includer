@@ -3,7 +3,7 @@
 	"title": "Drop Includer",
 	"description": "[[[ SHORTCUT KEY: Ctrl + . (Cmd + .) ]]] Please drag and drop some files, and This Extension inserts tags to include files. (link tag, img tag, script tag, and php include statement)",
 	"homepage": "https://github.com/jzmstrjp/brackets-drop-includer",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"keywords": ["insert", "tag", "css", "img", "link", "php", "include", "require"],
 	"author": "jzmstrjp",
 	"license": "MIT",
