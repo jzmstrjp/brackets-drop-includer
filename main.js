@@ -92,13 +92,18 @@ define(function(require, exports, module) {
 						var relativeFilename = abspath2rel(docPath, elm, root);
 						relativeFilename = tagMaker(relativeFilename, root);
 						doInsert({ text: relativeFilename });
+						if(files.length > 1){
+							editor.getSelections().forEach(function(elme, i, array){
+								editor.document.replaceRange("\n", editor.getSelections()[i]["start"]);
+							});
+						}
 					});
 				}
 			});
 
 		}
 
-		dropZone.style.display = "none";
+		//dropZone.style.display = "none";
 	}
 
 	function tagMaker(path, root) {
