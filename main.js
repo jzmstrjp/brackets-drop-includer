@@ -58,7 +58,11 @@ define(function(require, exports, module) {
 	}
 
 	function openDialog(){
-		if(dropZone){dropZone.style.display = "block";}
+		if(dropZone && dropZone.style.display !== "block"){
+			dropZone.style.display = "block";
+		}else{
+			dropZone.style.display = "none";
+		}
 	}
 
 
