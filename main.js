@@ -12,21 +12,16 @@ define(function(require, exports, module) {
 		ProjectManager = brackets.getModule("project/ProjectManager"),
 		ExtensionUtils = brackets.getModule("utils/ExtensionUtils");
 
-	var modalHTML = require("text!modal.html");
+	//var modalHTML = require("text!modal.html");
 
 	var commandID = "jzmstrjp.drop_includer.drop_includer_open";
 
 	var currentDoc,
 		editor;
 
-	var dropZone,
-		x,
-		y,
-		dragMode = false;
+	var dropZone;
 
-	var dropZoneStyle,
-		dropZoneX,
-		dropZoneY;
+	
 
 
 	ExtensionUtils.loadStyleSheet(module, "main.less");
@@ -44,26 +39,35 @@ define(function(require, exports, module) {
 	}
 
 
-	function drag_and_move(){
+
+	function drag_and_move(dropZone){
+		var x,
+			y,
+			dropZoneStyle,
+			dropZoneX,
+			dropZoneY,
+			dragMode = false;
+
 		dropZone.addEventListener("mousedown", function(e){
 			dragMode = true;
 			x = e.clientX;
 			y = e.clientY;
+
 			dropZoneStyle = window.getComputedStyle(dropZone);
 			dropZoneX = parseFloat(dropZoneStyle.left);
 			dropZoneY = parseFloat(dropZoneStyle.top);
 		});
+
 		dropZone.addEventListener("mouseup", function(){
 			dragMode = false;
 		});
+
 		dropZone.addEventListener("mousemove", function(e){
 			if(dragMode){
-				
 				var plusX = e.clientX - x;
 				var plusY = e.clientY - y;
 				dropZone.style.left = dropZoneX + plusX + "px";
 				dropZone.style.top = dropZoneY + plusY + "px";
-				
 			}
 		});
 	}
@@ -76,7 +80,7 @@ define(function(require, exports, module) {
 		dropZone = document.createElement("div");
 		dropZone.id = "tagInserterDropZone";
 		document.body.appendChild(dropZone);
-		dropZone.innerHTML = modalHTML;
+		dropZone.innerHTML = '<div class="tagInserterWaku" id="tagInserterRoot"><p class="tagInserterP">Root Path</p></div><p id="tagInserterClose"><span>Close</span></p><div class="tagInserterWaku" id="tagInserterRel"><p class="tagInserterP">Relative Path</p></div>p<p class="tagInserterCenterP"><span>Drop the files.</span></p>';
 		var $dropZoneChild = $("#tagInserterDropZone .tagInserterWaku");
 		$dropZoneChild.on('dragenter', _handleDragEnter);
 		$dropZoneChild.on('dragleave', _handleDragLeave);
@@ -85,7 +89,7 @@ define(function(require, exports, module) {
 			dropZone.style.display = "none";
 		});
 
-		drag_and_move();
+		drag_and_move(dropZone);
 	}
 
 	function openDialog(){
@@ -125,7 +129,7 @@ define(function(require, exports, module) {
 				if (!err) {
 					paths.forEach(function(elm) {
 						var relativeFilename = abspath2rel(docPath, elm, root);
-						relativeFilename = tagMaker(relativeFilename, root);
+						relativeFilename = tagMaker(relativeFilename, root, editor);
 						doInsert({ text: relativeFilename });
 						if(files.length > 1){
 							editor.getSelections().forEach(function(elme, i, array){
@@ -141,20 +145,54 @@ define(function(require, exports, module) {
 		//dropZone.style.display = "none";
 	}
 
-	function tagMaker(path, root) {
+	function getMode(editor){
+		var mode = editor.getModeForSelection();
+		return mode;
+	}
+
+	function tagMaker(path, root, editor) {
+		var mode = getMode(editor);
+		var phpStart = '<?php ';
+		var phpEnd = '?>';
+		if(mode === "clike"){
+			phpStart = '';
+			phpEnd = '';
+		}
 		var rtn;
 		var pathArr = path.split(".");
 		var ex = pathArr[pathArr.length - 1];
+		var noEx = path.replace(new RegExp("." + ex + "$"), "");
 		switch(ex) {
 			case "jpg":
 			case "jpeg":
 			case "png":
 			case "gif":
 			case "svg":
-				rtn = '<img src="' + path + '" alt="xxxxx">';
+				switch(mode){
+					case "text/x-less":
+					case "text/x-scss":
+					case "css":
+						rtn = 'background-image: url(' + path + ');';
+						break;
+					default:
+						rtn = '<img src="' + path + '" alt="xxxxx">';
+				}
 				break;
 			case "css":
-				rtn = '<link rel="stylesheet" href="' + path + '">';
+			case "scss":
+			case "less":
+				switch(mode){
+					case "text/x-" + ex:
+						rtn = '@import "' + path + '";';
+						break;
+					case "text/x-scss":
+					case "text/x-less":
+					case "css":
+						rtn = '@import "' + noEx + '.css";';
+						break;	
+					default:
+						rtn = '<link rel="stylesheet" href="' + path + '">';	
+				}
 				break;
 			case "js":
 				rtn = '<script src="' + path + '"></script>';
@@ -169,9 +207,9 @@ define(function(require, exports, module) {
 
 			case "php":
 				if(root){
-					rtn = '<?php include $_SERVER["DOCUMENT_ROOT"]."' + path + '";?>';
+					rtn = phpStart + 'include $_SERVER["DOCUMENT_ROOT"]."' + path + '";' + phpEnd;
 				} else {
-					rtn = '<?php include dirname(__FILE__)."/' + path + '";?>';
+					rtn = phpStart + 'include dirname(__FILE__)."/' + path + '";' + phpEnd;
 				}
 				break;
 			default:

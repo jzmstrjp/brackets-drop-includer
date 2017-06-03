@@ -1,9 +1,9 @@
 {
 	"name": "brackets-drop-includer",
 	"title": "Drop Includer",
-	"description": "[[[ SHORTCUT KEY: Ctrl + . (Cmd + .) ]]] Please drag and drop some files, and This Extension inserts tags to include files. (link tag, img tag, script tag, and php include statement)",
+	"description": "SHORTCUT KEY : Ctrl + . (Cmd + .) Please drag and drop some files into the modal window, and this extension inserts tags. (link tag, img tag, script tag, or php include statement)",
 	"homepage": "https://github.com/jzmstrjp/brackets-drop-includer",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"keywords": ["insert", "tag", "css", "img", "link", "php", "include", "require"],
 	"author": "jzmstrjp",
 	"license": "MIT",
@@ -16,7 +16,7 @@
 	],
 	"package-i18n":{
 		"ja":{
-			"description": "ファイルをドラッグ&ドロップするとCSSのlinkタグやJavascriptのscriptタグ、imgタグ等を挿入します。phpファイルならincludeします。相対パスとルートパスが選べます。「Ctrl + .」(Cmd + .)キーを押すとウィンドウが開きます。",
+			"description": "ファイルをエクスプローラー（Finder）からモーダルウィンドウにドラッグ&ドロップすると、CSSのlinkタグやJavascriptのscriptタグ、imgタグ等を挿入します。phpファイルならinclude文を挿入します。相対パスとルートパスが選べます。「Ctrl + .」(Cmd + .)キーを押すとモーダルウィンドウが開きます。",
 			"title": "インクルードし太郎"
 		}
 	}
