@@ -5,6 +5,8 @@ Please drag and drop some files into the modal window, and this extension insert
 
 (link tag, img tag, script tag, or php include statement)
 
+It also be able to open from [Browse...] with shortcut key.
+
 ## Shortcut Key
 ### Open The Modal Window (drag and drop zone)
 Ctrl(Cmd) + .
