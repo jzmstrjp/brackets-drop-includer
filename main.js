@@ -61,19 +61,24 @@ define(function(require, exports, module) {
 		var docPath = currentDoc.file._parentPath;
 
 		FileSystem.showOpenDialog(true, false, "Select File(s) to include. " + addTitle, null, null, function(str, paths) {
-			paths.forEach(function(elm) {
-				var relativeFilename = abspath2rel(docPath, elm, root);
-				relativeFilename = tagMaker(relativeFilename, root, editor);
-				doInsert({ text: relativeFilename });
-				if (paths.length > 1) {
-					editor.getSelections().forEach(function(elme, i, array) {
-						editor.document.replaceRange("\n", editor.getSelections()[i]["start"]);
-					});
-				}
-			});
+			forEachRun(editor, docPath, paths, root);
 		});
 	}
 
+
+	function forEachRun(editor, docPath, paths, root){
+		paths.forEach(function(elm) {
+			var relativeFilename = abspath2rel(docPath, elm, root);
+			relativeFilename = tagMaker(relativeFilename, root, editor);
+			doInsert({ text: relativeFilename });
+			console.log(relativeFilename.slice(0, 4));
+			if (paths.length > 1 || relativeFilename.slice(0, 4) !== "<img") {
+				editor.getSelections().forEach(function(elme, i, array) {
+					editor.document.replaceRange("\n", editor.getSelections()[i]["start"]);
+				});
+			}
+		});
+	}
 
 	/*****************************
 	 * init
@@ -135,22 +140,15 @@ define(function(require, exports, module) {
 			e.preventDefault();
 
 			brackets.app.getDroppedFiles(function(err, paths) {
-				//console.log(paths);
 				if (!err) {
-					paths.forEach(function(elm) {
-						var relativeFilename = abspath2rel(docPath, elm, root);
-						relativeFilename = tagMaker(relativeFilename, root, editor);
-						doInsert({ text: relativeFilename });
-						if (files.length > 1) {
-							editor.getSelections().forEach(function(elme, i, array) {
-								editor.document.replaceRange("\n", editor.getSelections()[i]["start"]);
-							});
-						}
-					});
+					forEachRun(editor, docPath, paths, root);
 				}
 			});
 		}
 	}
+
+
+
 
 	function getMode(editor) {
 		var mode = editor.getModeForSelection();
