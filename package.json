@@ -1,9 +1,9 @@
 {
 	"name": "brackets-drop-includer",
 	"title": "Drop Includer",
-	"description": "SHORTCUT KEY : Ctrl + . (Cmd + .) Please drag and drop some files into the modal window, and this extension inserts tags. (link tag, img tag, script tag, or php include statement)",
+	"description": "=== SHORTCUT KEY : Ctrl(Cmd) + . === Please drag and drop some files into the modal window, and this extension inserts tags(link tag, img tag, script tag, or php include statement). It also be able to Open from [Browse...] with shortcut key [ Ctrl(Cmd) + Shift + . ](Root Path) or [ Ctrl(Cmd) + Shift + Alt + . ](Relative Path).",
 	"homepage": "https://github.com/jzmstrjp/brackets-drop-includer",
-	"version": "1.0.6",
+	"version": "1.0.8",
 	"keywords": ["insert", "tag", "css", "img", "link", "php", "include", "require"],
 	"author": "jzmstrjp",
 	"license": "MIT",
@@ -16,7 +16,7 @@
 	],
 	"package-i18n":{
 		"ja":{
-			"description": "ファイルをエクスプローラー（Finder）からモーダルウィンドウにドラッグ&ドロップすると、CSSのlinkタグやJavascriptのscriptタグ、imgタグ等を挿入します。phpファイルならinclude文を挿入します。相対パスとルートパスが選べます。「Ctrl + .」(Cmd + .)キーを押すとモーダルウィンドウが開きます。",
+			"description": "ファイルをエクスプローラー（Finder）からモーダルウィンドウにドラッグ&ドロップすると、CSSのlinkタグやJavascriptのscriptタグ、imgタグ、またはphpのinclude文を挿入します。相対パスとルートパスが選べます。「Ctrl(Cmd) + .」キーを押すとモーダルウィンドウが開きます。ファイルの参照から開く場合は「Ctrl(Cmd) +　Shift + .」（ルートパス）または「Ctrl(Cmd) +　Shift + Alt　+ .」（相対パス）です。",
 			"title": "インクルードし太郎"
 		}
 	}
