@@ -34,8 +34,8 @@ define(function(require, exports, module) {
 	CommandManager.register("Open Drop Includer", commandID_modal, openDialog);
 	KeyBindingManager.addBinding(commandID_modal, "Ctrl-.");
 
-	CommandManager.register("Drop Includer(Browse: Root Path)", commandID_browse_root_path, function(){
-		openBrowse({root: true});
+	CommandManager.register("Drop Includer(Browse: Root Path)", commandID_browse_root_path, function() {
+		openBrowse({ root: true });
 	});
 	KeyBindingManager.addBinding(commandID_browse_root_path, "Ctrl-Shift-.");
 
@@ -46,17 +46,21 @@ define(function(require, exports, module) {
 	function openBrowse(obj) {
 		var root = false;
 		var addTitle = "(Relative Path)";
-		if(obj && obj.root === true){
+		if (obj && obj.root === true) {
 			root = true;
 			addTitle = "(Root Path)";
 		}
 
 
 		currentDoc = DocumentManager.getCurrentDocument();
-		if (!currentDoc) {return false};
+		if (!currentDoc) {
+			return false;
+		};
 
 		editor = EditorManager.getCurrentFullEditor();
-		if (!editor) {return false};
+		if (!editor) {
+			return false;
+		};
 
 		var docPath = currentDoc.file._parentPath;
 
@@ -66,18 +70,29 @@ define(function(require, exports, module) {
 	}
 
 
-	function forEachRun(editor, docPath, paths, root){
-		paths.forEach(function(elm) {
-			var relativeFilename = abspath2rel(docPath, elm, root);
-			relativeFilename = tagMaker(relativeFilename, root, editor);
-			doInsert({ text: relativeFilename });
-			console.log(relativeFilename.slice(0, 4));
-			if (paths.length > 1 || relativeFilename.slice(0, 4) !== "<img") {
-				editor.getSelections().forEach(function(elme, i, array) {
-					editor.document.replaceRange("\n", editor.getSelections()[i]["start"]);
-				});
-			}
-		});
+	function forEachRun(editor, docPath, paths, root) {
+		var selections = editor.getSelections();
+		if (selections.length === paths.length) {
+			var relativeFilenameArr = [];
+			paths.forEach(function(elm) {
+				var relativeFilename = abspath2rel(docPath, elm, root);
+				relativeFilename = tagMaker(relativeFilename, root, editor);
+				relativeFilenameArr.push(relativeFilename);
+			});
+			one_by_one(relativeFilenameArr, selections);
+		} else {
+			paths.forEach(function(elm) {
+				var relativeFilename = abspath2rel(docPath, elm, root);
+				relativeFilename = tagMaker(relativeFilename, root, editor);
+				console.log(relativeFilename);
+				doInsert({ text: relativeFilename });
+				if (paths.length > 1 || relativeFilename.slice(0, 4) !== "<img") {
+					editor.getSelections().forEach(function(elme, i, array) {
+						editor.document.replaceRange("\n", editor.getSelections()[i]["start"]);
+					});
+				}
+			});
+		}
 	}
 
 	/*****************************
@@ -126,10 +141,14 @@ define(function(require, exports, module) {
 		}
 
 		currentDoc = DocumentManager.getCurrentDocument();
-		if (!currentDoc) {return false};
+		if (!currentDoc) {
+			return false;
+		};
 
 		editor = EditorManager.getCurrentFullEditor();
-		if (!editor) {return false};
+		if (!editor) {
+			return false;
+		};
 
 
 		var files = e.originalEvent.dataTransfer.files,
@@ -261,12 +280,21 @@ define(function(require, exports, module) {
 	/*****************************
 	 * insert
 	 */
+
+	function one_by_one(relativeFilenameArr, selections) {
+		selections.forEach(function(sel, i){
+			editor.document.replaceRange(relativeFilenameArr[i], sel.start, sel.end);
+		});
+	}
+
+
 	function doInsert(insertItem) {
-		var selections = editor.getSelections(),
-			edits = [];
+		var selections = editor.getSelections();
+		var edits = [];
 
 		selections.forEach(function(sel) {
 			queueEdits(edits, getEdits(sel, insertItem));
+			//editor.document.replaceRange(insertItem.text, sel.start, sel.end);
 		});
 
 		// batch for single undo
@@ -322,6 +350,7 @@ define(function(require, exports, module) {
 			}
 		}
 	}
+
 
 	// Initialize extension
 	AppInit.appReady(function() {
