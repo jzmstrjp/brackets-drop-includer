@@ -72,7 +72,7 @@ define(function(require, exports, module) {
 
 	function forEachRun(editor, docPath, paths, root) {
 		var selections = editor.getSelections();
-		if (selections.length === paths.length) {
+		if (paths.length > 1 && selections.length === paths.length) {
 			var relativeFilenameArr = [];
 			paths.forEach(function(elm) {
 				var relativeFilename = abspath2rel(docPath, elm, root);
