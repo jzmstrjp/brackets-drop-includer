@@ -11,6 +11,7 @@ define(function(require, exports, module) {
 		AppInit = brackets.getModule("utils/AppInit"),
 		ProjectManager = brackets.getModule("project/ProjectManager"),
 		FileSystem = brackets.getModule("filesystem/FileSystem"),
+		FileUtils = brackets.getModule("file/FileUtils"),
 		ExtensionUtils = brackets.getModule("utils/ExtensionUtils");
 
 	//var modalHTML = require("text!modal.html");
@@ -20,6 +21,7 @@ define(function(require, exports, module) {
 	var commandID_modal = "jzmstrjp.drop_includer.drop_includer_open",
 		commandID_browse_root_path = "jzmstrjp.drop_includer.drop_includer_browse_root_path",
 		commandID_browse_relative_path = "jzmstrjp.drop_includer.drop_includer_browse_relative_path";
+
 
 	var currentDoc,
 		editor;
@@ -41,6 +43,23 @@ define(function(require, exports, module) {
 
 	CommandManager.register("Drop Includer(Browse: Relative Path)", commandID_browse_relative_path, openBrowse);
 	KeyBindingManager.addBinding(commandID_browse_relative_path, "Ctrl-Shift-Alt-.");
+
+
+	//テスト用
+	CommandManager.register("テスト1", "jzmstrjp.drop_includer.test1", test_function1);
+	//KeyBindingManager.addBinding("jzmstrjp.drop_includer.test1", "F9");
+	CommandManager.register("テスト2", "jzmstrjp.drop_includer.test2", test_function2);
+	//KeyBindingManager.addBinding("jzmstrjp.drop_includer.test2", "F10");
+	var test_hensu1;
+	function test_function1(){
+		var editor = EditorManager.getCurrentFullEditor();
+		alert(editor.getModeForSelection());
+		test_hensu1 = editor.getSelections();
+	}
+	function test_function2(){
+		var editor = EditorManager.getCurrentFullEditor();
+		editor.setSelections(test_hensu1);
+	}
 
 
 	function openBrowse(obj) {
@@ -76,6 +95,37 @@ define(function(require, exports, module) {
 			return false;
 		};*/
 		var selections = editor.getSelections();
+		var multiBGI = false;
+
+		if(paths.length > 1){
+			var imgExArr = ["jpg", "jpeg", "png", "gif"];//画像拡張子一覧
+			var boolArr = [];//画像かどうかを格納していく配列
+			var all_img = false;
+
+			paths.forEach(function(path){
+				if(imgExArr.indexOf(FileUtils.getFileExtension(path)) === -1){
+					boolArr.push(false);
+				} else {
+					boolArr.push(true);
+				}
+			});
+			if(boolArr.length > 0 && boolArr.indexOf(false) === -1){//全部true（画像）だったら
+				//alert("全部画像");
+				all_img = true;
+			}
+			if(all_img){
+				switch(getMode(editor)){
+					case "text/x-less":
+					case "text/x-scss":
+					case "css":
+						//alert("全部画像だしcss上に貼り付け用としている");
+						multiBGI = true;
+						break;
+				}
+			}
+		}
+
+		
 
 		currentDoc.batchOperation(function(){
 			if (paths.length > 1 && selections.length === paths.length) {
@@ -86,14 +136,32 @@ define(function(require, exports, module) {
 					relativeFilenameArr.push(relativeFilename);
 				});
 				one_by_one(relativeFilenameArr, selections);
+			} else if (multiBGI){
+				var bgiTxt = 'background-image: url(';
+				paths.forEach(function(path, i, arr) {
+					bgiTxt += abspath2rel(docPath, path, root);
+					if(i < arr.length - 1){
+						bgiTxt += '), url(';
+					}
+				});
+				bgiTxt += ');';
+				editor.getSelections().forEach(function(sel, i, array) {
+					editor.document.replaceRange(bgiTxt, editor.getSelections()[i]["start"]);
+				});
+				editor.getSelections().forEach(function(sel, i, array) {
+					editor.document.replaceRange("\n", editor.getSelections()[i]["start"]);
+				});
+
 			} else {
 				paths.forEach(function(elm) {
 					var relativeFilename = abspath2rel(docPath, elm, root);
 					relativeFilename = tagMaker(relativeFilename, root, editor);
 
 					doInsert({ text: relativeFilename });
-					if (paths.length === 1 && (relativeFilename.slice(0, 4) === "<img" || relativeFilename.slice(0, 1) !== "<")) {
-						//1ファイルで、さらにimgかパスのみなら、改行つけない。
+					if (paths.length === 1 && relativeFilename.slice(0, 4) === "<img") {
+						//1ファイルで、さらにimgなら、改行つけない。
+					} else if (paths.length === 1 && relativeFilename.slice(0, 1) !== "<" && getMode(editor) === "html") {
+						//1ファイルで、タグじゃなくて、htmlモードなら、改行つけない。（pdfとかは改行したくないけどcssとかは改行したいので）
 					} else {
 						editor.getSelections().forEach(function(elme, i, array) {
 							editor.document.replaceRange("\n", editor.getSelections()[i]["start"]);
@@ -103,6 +171,8 @@ define(function(require, exports, module) {
 			}
 		});
 	}
+
+	
 
 	/*****************************
 	 * init
@@ -192,9 +262,8 @@ define(function(require, exports, module) {
 			phpEnd = '';
 		}
 		var rtn;
-		var pathArr = path.split(".");
-		var ex = pathArr[pathArr.length - 1];
-		var noEx = path.replace(new RegExp("." + ex + "$"), "");
+		var ex = FileUtils.getFileExtension(path);
+		var noEx = FileUtils.getFilenameWithoutExtension(path);
 		switch (ex) {
 			case "jpg":
 			case "jpeg":

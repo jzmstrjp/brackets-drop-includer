@@ -3,7 +3,7 @@
 	"title": "Drop Includer",
 	"description": "=== SHORTCUT KEY : Ctrl(Cmd) + . === Please drag and drop some files into the modal window, and this extension inserts tags(link tag, img tag, script tag, or php include statement). It also be able to Open from [Browse...] with shortcut key [ Ctrl(Cmd) + Shift + . ](Root Path) or [ Ctrl(Cmd) + Shift + Alt + . ](Relative Path).",
 	"homepage": "https://github.com/jzmstrjp/brackets-drop-includer",
-	"version": "1.1.5",
+	"version": "1.1.6",
 	"keywords": ["insert", "tag", "css", "img", "link", "php", "include", "require"],
 	"author": "jzmstrjp",
 	"license": "MIT",
