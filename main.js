@@ -71,28 +71,37 @@ define(function(require, exports, module) {
 
 
 	function forEachRun(editor, docPath, paths, root) {
+		/*currentDoc = DocumentManager.getCurrentDocument();
+		if (!currentDoc) {
+			return false;
+		};*/
 		var selections = editor.getSelections();
-		if (paths.length > 1 && selections.length === paths.length) {
-			var relativeFilenameArr = [];
-			paths.forEach(function(elm) {
-				var relativeFilename = abspath2rel(docPath, elm, root);
-				relativeFilename = tagMaker(relativeFilename, root, editor);
-				relativeFilenameArr.push(relativeFilename);
-			});
-			one_by_one(relativeFilenameArr, selections);
-		} else {
-			paths.forEach(function(elm) {
-				var relativeFilename = abspath2rel(docPath, elm, root);
-				relativeFilename = tagMaker(relativeFilename, root, editor);
-				console.log(relativeFilename);
-				doInsert({ text: relativeFilename });
-				if (paths.length > 1 || relativeFilename.slice(0, 4) !== "<img") {
-					editor.getSelections().forEach(function(elme, i, array) {
-						editor.document.replaceRange("\n", editor.getSelections()[i]["start"]);
-					});
-				}
-			});
-		}
+
+		currentDoc.batchOperation(function(){
+			if (paths.length > 1 && selections.length === paths.length) {
+				var relativeFilenameArr = [];
+				paths.forEach(function(elm) {
+					var relativeFilename = abspath2rel(docPath, elm, root);
+					relativeFilename = tagMaker(relativeFilename, root, editor);
+					relativeFilenameArr.push(relativeFilename);
+				});
+				one_by_one(relativeFilenameArr, selections);
+			} else {
+				paths.forEach(function(elm) {
+					var relativeFilename = abspath2rel(docPath, elm, root);
+					relativeFilename = tagMaker(relativeFilename, root, editor);
+
+					doInsert({ text: relativeFilename });
+					if (paths.length === 1 && (relativeFilename.slice(0, 4) === "<img" || relativeFilename.slice(0, 1) !== "<")) {
+						//1ファイルで、さらにimgかパスのみなら、改行つけない。
+					} else {
+						editor.getSelections().forEach(function(elme, i, array) {
+							editor.document.replaceRange("\n", editor.getSelections()[i]["start"]);
+						});
+					}
+				});
+			}
+		});
 	}
 
 	/*****************************
@@ -297,21 +306,18 @@ define(function(require, exports, module) {
 			//editor.document.replaceRange(insertItem.text, sel.start, sel.end);
 		});
 
-		// batch for single undo
-		currentDoc.batchOperation(function() {
-			// perform edits
-			selections = editor.document.doMultipleEdits(edits);
-			editor.setSelections(selections);
+		// perform edits
+		selections = editor.document.doMultipleEdits(edits);
+		editor.setSelections(selections);
 
-			// indent lines with selections
-			selections.forEach(function(sel) {
-				if (!sel.end || sel.start.line === sel.end.line) {
-					// The document is the one that batches operations, but we want to use
-					// CodeMirror's indent operation. So we need to use the document's own
-					// backing editor's CodeMirror to do the indentation.
-					currentDoc._masterEditor._codeMirror.indentLine(sel.start.line);
-				}
-			});
+		// indent lines with selections
+		selections.forEach(function(sel) {
+			if (!sel.end || sel.start.line === sel.end.line) {
+				// The document is the one that batches operations, but we want to use
+				// CodeMirror's indent operation. So we need to use the document's own
+				// backing editor's CodeMirror to do the indentation.
+				currentDoc._masterEditor._codeMirror.indentLine(sel.start.line);
+			}
 		});
 	}
 
@@ -341,13 +347,7 @@ define(function(require, exports, module) {
 
 	function queueEdits(edits, val) {
 		if (val) {
-			if (Array.isArray(val)) {
-				val.forEach(function(v) {
-					edits.push(v);
-				});
-			} else {
-				edits.push(val);
-			}
+			edits.push(val);
 		}
 	}
 
