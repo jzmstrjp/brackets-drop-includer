@@ -51,12 +51,14 @@ define(function(require, exports, module) {
 	CommandManager.register("テスト2", "jzmstrjp.drop_includer.test2", test_function2);
 	//KeyBindingManager.addBinding("jzmstrjp.drop_includer.test2", "F10");
 	var test_hensu1;
-	function test_function1(){
+
+	function test_function1() {
 		var editor = EditorManager.getCurrentFullEditor();
 		alert(editor.getModeForSelection());
 		test_hensu1 = editor.getSelections();
 	}
-	function test_function2(){
+
+	function test_function2() {
 		var editor = EditorManager.getCurrentFullEditor();
 		editor.setSelections(test_hensu1);
 	}
@@ -97,24 +99,24 @@ define(function(require, exports, module) {
 		var selections = editor.getSelections();
 		var multiBGI = false;
 
-		if(paths.length > 1){
-			var imgExArr = ["jpg", "jpeg", "png", "gif"];//画像拡張子一覧
-			var boolArr = [];//画像かどうかを格納していく配列
+		if (paths.length > 1) {
+			var imgExArr = ["jpg", "jpeg", "png", "gif"]; //画像拡張子一覧
+			var boolArr = []; //画像かどうかを格納していく配列
 			var all_img = false;
 
-			paths.forEach(function(path){
-				if(imgExArr.indexOf(FileUtils.getFileExtension(path)) === -1){
+			paths.forEach(function(path) {
+				if (imgExArr.indexOf(FileUtils.getFileExtension(path)) === -1) {
 					boolArr.push(false);
 				} else {
 					boolArr.push(true);
 				}
 			});
-			if(boolArr.length > 0 && boolArr.indexOf(false) === -1){//全部true（画像）だったら
+			if (boolArr.length > 0 && boolArr.indexOf(false) === -1) { //全部true（画像）だったら
 				//alert("全部画像");
 				all_img = true;
 			}
-			if(all_img){
-				switch(getMode(editor)){
+			if (all_img) {
+				switch (getMode(editor)) {
 					case "text/x-less":
 					case "text/x-scss":
 					case "css":
@@ -125,9 +127,9 @@ define(function(require, exports, module) {
 			}
 		}
 
-		
 
-		currentDoc.batchOperation(function(){
+
+		currentDoc.batchOperation(function() {
 			if (paths.length > 1 && selections.length === paths.length) {
 				var relativeFilenameArr = [];
 				paths.forEach(function(elm) {
@@ -136,11 +138,11 @@ define(function(require, exports, module) {
 					relativeFilenameArr.push(relativeFilename);
 				});
 				one_by_one(relativeFilenameArr, selections);
-			} else if (multiBGI){
+			} else if (multiBGI) {
 				var bgiTxt = 'background-image: url(';
 				paths.forEach(function(path, i, arr) {
 					bgiTxt += abspath2rel(docPath, path, root);
-					if(i < arr.length - 1){
+					if (i < arr.length - 1) {
 						bgiTxt += '), url(';
 					}
 				});
@@ -172,7 +174,7 @@ define(function(require, exports, module) {
 		});
 	}
 
-	
+
 
 	/*****************************
 	 * init
@@ -350,6 +352,9 @@ define(function(require, exports, module) {
 		for (var i = 0; i < base_path.length; i++) {
 			tmp_str += '../';
 		}
+		if (tmp_str === ''){
+			tmp_str = './';
+		}
 		return tmp_str + target_path.join('/');
 	}
 
@@ -360,8 +365,10 @@ define(function(require, exports, module) {
 	 */
 
 	function one_by_one(relativeFilenameArr, selections) {
-		selections.forEach(function(sel, i){
-			editor.document.replaceRange(relativeFilenameArr[i], sel.start, sel.end);
+		var newSel;
+		selections.forEach(function(sel, i) {
+			newSel = editor.getSelections();
+			editor.document.replaceRange(relativeFilenameArr[i], newSel[i].start, newSel[i].end);
 		});
 	}
 
@@ -377,7 +384,7 @@ define(function(require, exports, module) {
 
 		// perform edits
 		selections = editor.document.doMultipleEdits(edits);
-		editor.setSelections(selections);
+		//editor.setSelections(selections);
 
 		// indent lines with selections
 		selections.forEach(function(sel) {
@@ -390,29 +397,23 @@ define(function(require, exports, module) {
 		});
 	}
 
-	function getEdits(sel, insertItem) {
-		var newTagPair = insertItem.text.split("|");
 
-		var selText = currentDoc.getRange(sel.start, sel.end),
-			openTag = newTagPair[0],
-			closeTag = newTagPair.length === 2 ? newTagPair[1] : "",
-			insertString = openTag + selText + closeTag,
+
+	function getEdits(sel, insertItem) {
+
+		var insertString = insertItem.text,
 			replSelEnd = $.extend({}, sel.end);
 
 		// reset selection
 		var selNewStart = $.extend({}, sel.start),
 			selNewEnd = $.extend({}, sel.end);
 
-		selNewStart.ch += openTag.length;
-		if (sel.start.line === sel.end.line) {
-			selNewEnd.ch += openTag.length;
-		}
-
 		return {
 			edit: { text: insertString, start: sel.start, end: replSelEnd },
 			selection: { start: selNewStart, end: selNewEnd, primary: sel.primary, isBeforeEdit: false }
 		};
 	}
+
 
 	function queueEdits(edits, val) {
 		if (val) {
