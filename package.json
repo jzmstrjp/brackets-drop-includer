@@ -3,7 +3,7 @@
 	"title": "Include with [Browse...] (or Drag & Drop)",
 	"description": "You can open files from [Browse...] with shortcut key -- [ Ctrl(Cmd)-Shift-. (Root Path) ] or [ Ctrl(Cmd)-Shift-Alt-. (Relative Path)] --. And this extension inserts tags automatically (link tag, img tag, script tag, css @import, or php include statement). It also be able to open files from modal window. Please press shortcut key [ Ctrl(Cmd)-. ], and drag and drop some files into the modal window.",
 	"homepage": "https://github.com/jzmstrjp/brackets-drop-includer",
-	"version": "1.2.0",
+	"version": "1.2.1",
 	"keywords": ["file", "include", "drag", "drop", "browse"],
 	"author": "jzmstrjp",
 	"license": "MIT",
