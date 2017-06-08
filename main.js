@@ -92,15 +92,14 @@ define(function(require, exports, module) {
 
 
 	function forEachRun(editor, docPath, paths, root) {
-		/*currentDoc = DocumentManager.getCurrentDocument();
-		if (!currentDoc) {
-			return false;
-		};*/
+		//paths.push(paths.shift());
+		//paths.sort();
+
 		var selections = editor.getSelections();
 		var multiBGI = false;
 
 		if (paths.length > 1) {
-			var imgExArr = ["jpg", "jpeg", "png", "gif"]; //画像拡張子一覧
+			var imgExArr = ["jpg", "jpeg", "png", "gif", "svg"]; //画像拡張子一覧
 			var boolArr = []; //画像かどうかを格納していく配列
 			var all_img = false;
 
