@@ -1,23 +1,29 @@
 {
-	"name": "brackets-drop-includer",
-	"title": "Include with [Browse...] (or Drag & Drop)",
-	"description": "You can open files from [Browse...] with shortcut key -- [ Ctrl(Cmd)-Shift-. (Root Path) ] or [ Ctrl(Cmd)-Shift-Alt-. (Relative Path)] --. And this extension inserts tags automatically (link tag, img tag, script tag, css @import, or php include statement). It also be able to open files from modal window. Please press shortcut key [ Ctrl(Cmd)-. ], and drag and drop some files into the modal window.",
-	"homepage": "https://github.com/jzmstrjp/brackets-drop-includer",
-	"version": "1.2.1",
-	"keywords": ["file", "include", "drag", "drop", "browse"],
-	"author": "jzmstrjp",
-	"license": "MIT",
-	"engines": {
-		"brackets": ">=1.8.0"
-	},
-	"i18n": [
-		"en",
-		"ja"
-	],
-	"package-i18n": {
-		"ja": {
-			"description": "「参照...」からファイルを選択して、ファイルに応じたタグを挿入します（linkタグ、scriptタグ、imgタグ、cssの@import文、phpのinclude文など）。ルートパスにしたい場合は「Ctrl(Cmd) + Shift + .」、相対パスがよければ「Ctrl(Cmd) + Shift + Alt + .」です。「Ctrl(Cmd) + .」キーでモーダルウィンドウを開いて、そこにファイルをドラッグ&ドロップして開くことも出来ます。",
-			"title": "ファイル参照し太郎"
-		}
-	}
+  "name": "brackets-drop-includer",
+  "title": "Include with [Browse...] (or Drag & Drop)",
+  "description": "You can open files from [Browse...] with shortcut key -- [ Ctrl(Cmd)-Shift-. (Root Path) ] or [ Ctrl(Cmd)-Shift-Alt-. (Relative Path)] --. And this extension inserts tags automatically (link tag, img tag, script tag, css @import, or php include statement). It also be able to open files from modal window. Please press shortcut key [ Ctrl(Cmd)-. ], and drag and drop some files into the modal window.",
+  "homepage": "https://github.com/jzmstrjp/brackets-drop-includer",
+  "version": "1.2.1",
+  "keywords": [
+    "file",
+    "include",
+    "drag",
+    "drop",
+    "browse"
+  ],
+  "author":"jzmstrjp",
+  "license": "MIT",
+  "engines": {
+    "brackets": ">=1.8.0"
+  },
+  "i18n": [
+    "en",
+    "ja"
+  ],
+  "package-i18n": {
+    "ja": {
+      "description": "「参照...」からファイルを選択して、ファイルに応じたタグを挿入します（linkタグ、scriptタグ、imgタグ、cssの@import文、phpのinclude文など）。ルートパスにしたい場合は「Ctrl(Cmd) + Shift + .」、相対パスがよければ「Ctrl(Cmd) + Shift + Alt + .」です。「Ctrl(Cmd) + .」キーでモーダルウィンドウを開いて、そこにファイルをドラッグ&ドロップして開くことも出来ます。",
+      "title": "ファイル参照し太郎"
+    }
+  }
 }

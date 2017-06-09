@@ -1,19 +1,18 @@
-# brackets-drop-includer
-
-## How to use
-Please drag and drop some files into the modal window, and this extension inserts tags.
-
-(link tag, img tag, script tag, or php include statement)
-
-It also be able to open from [Browse...] with shortcut key.
+# Include with [Browse...] (or Drag & Drop)
+You can open files from [Browse...] with shortcut key.  
+And this extension inserts tags automatically (link tag, img tag, script tag, css @import, or php include statement).  
+It also be able to open files from a modal window.
 
 ## Shortcut Key
-### Open The Modal Window (drag and drop zone)
-Ctrl(Cmd) + .
-
 ### Show an "Open" dialog
 #### Root Path
-Ctrl(Cmd) + Shift + .
+Windows: Ctrl-Shift-.  
+Mac: Cmd-Shift-.
 
 #### Relative Path
-Ctrl(Cmd) + Shift + Alt + .
+Windows: Ctrl-Shift-Alt-.  
+Mac: Cmd-Shift-Alt-.
+
+### Open The Modal Window (drag and drop zone)
+Windows: Ctrl-.  
+Mac: Cmd-.

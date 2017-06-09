@@ -1,4 +1,4 @@
-define(function(require) {
+define(function() {
 	"use strict";
 
 
@@ -35,8 +35,6 @@ define(function(require) {
 			dropZone.appendChild(resizer);
 			var dropZoneW,
 				dropZoneH,
-				dropZoneX,
-				dropZoneY,
 				resizeMode = false;
 
 			resizer.addEventListener("mousedown", function(e) {

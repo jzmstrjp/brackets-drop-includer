@@ -48,12 +48,12 @@ define(function(require, exports, module) {
 		currentDoc = DocumentManager.getCurrentDocument();
 		if (!currentDoc) {
 			return false;
-		};
+		}
 
 		editor = EditorManager.getCurrentFullEditor();
 		if (!editor) {
 			return false;
-		};
+		}
 
 		var docPath = currentDoc.file._parentPath;
 
@@ -65,7 +65,7 @@ define(function(require, exports, module) {
 
 	function isDir(path){
 		var rtn;
-		FileSystem.resolve(path, function(errorString, fileSystemEntry, fileSystemStats){
+		FileSystem.resolve(path, function(errorString, fileSystemEntry){
 			rtn = fileSystemEntry._isDirectory;
 		});
 		return rtn;
@@ -108,11 +108,11 @@ define(function(require, exports, module) {
 					}
 				});
 				bgiTxt += ');';
-				editor.getSelections().forEach(function(sel, i, array) {
-					editor.document.replaceRange(bgiTxt, editor.getSelections()[i]["start"]);
+				editor.getSelections().forEach(function(sel, i) {
+					editor.document.replaceRange(bgiTxt, editor.getSelections()[i].start);
 				});
-				editor.getSelections().forEach(function(sel, i, array) {
-					editor.document.replaceRange("\n", editor.getSelections()[i]["start"]);
+				editor.getSelections().forEach(function(sel, i) {
+					editor.document.replaceRange("\n", editor.getSelections()[i].start);
 				});
 			} else {
 				paths.forEach(function(elm) {
@@ -125,8 +125,8 @@ define(function(require, exports, module) {
 					} else if (paths.length === 1 && relativeFilename.slice(0, 1) !== "<" && getMode(editor) === "html") {
 						//1ファイルで、タグじゃなくて、htmlモードなら、改行つけない。（pdfとかは改行したくないけどcssとかは改行したいので）
 					} else {
-						editor.getSelections().forEach(function(elme, i, array) {
-							editor.document.replaceRange("\n", editor.getSelections()[i]["start"]);
+						editor.getSelections().forEach(function(elme, i) {
+							editor.document.replaceRange("\n", editor.getSelections()[i].start);
 						});
 					}
 				});
@@ -161,19 +161,20 @@ define(function(require, exports, module) {
 
 	function _handleDrop(e) {
 		var root = false;
-		if (this.id === "tagInserterRoot") {
+		console.log(e.currentTarget.id);
+		if (e.currentTarget.id === "tagInserterRoot") {
 			root = true;
 		}
 
 		currentDoc = DocumentManager.getCurrentDocument();
 		if (!currentDoc) {
 			return false;
-		};
+		}
 
 		editor = EditorManager.getCurrentFullEditor();
 		if (!editor) {
 			return false;
-		};
+		}
 
 
 		var files = e.originalEvent.dataTransfer.files,
