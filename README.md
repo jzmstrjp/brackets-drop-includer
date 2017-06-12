@@ -1,4 +1,4 @@
-\# Include with \[Browse...] (or Drag & Drop)
+# Include with \[Browse...] (or Drag & Drop)
 You can open files from [Browse...] with shortcut key.  
 And this extension inserts tags automatically (link tag, img tag, script tag, css @import, or php include statement).  
 It also be able to open files from a modal window.
