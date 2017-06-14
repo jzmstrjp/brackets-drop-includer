@@ -1,8 +1,14 @@
-define(function() {
+define(function(require) {
 	"use strict";
-
+	var P_MANAGER = require("PreferencesManager");
 
 	function drag_and_move(dropZone, obj) {
+		var prefid = dropZone.id;
+		if(P_MANAGER.get("au.drag_and_move"+"_"+prefid+".x")){dropZone.style.left = P_MANAGER.get("au.drag_and_move"+"_"+prefid+".x");}
+		if(P_MANAGER.get("au.drag_and_move"+"_"+prefid+".y")){dropZone.style.top = P_MANAGER.get("au.drag_and_move"+"_"+prefid+".y");}
+		if(P_MANAGER.get("au.drag_and_move"+"_"+prefid+".w")){dropZone.style.width = P_MANAGER.get("au.drag_and_move"+"_"+prefid+".w");}
+		if(P_MANAGER.get("au.drag_and_move"+"_"+prefid+".h")){dropZone.style.height = P_MANAGER.get("au.drag_and_move"+"_"+prefid+".h");}
+
 		var x,
 			y,
 			dropZoneStyle,
@@ -44,10 +50,10 @@ define(function() {
 				y = e.clientY;
 
 				dropZoneStyle = window.getComputedStyle(dropZone);
-				dropZoneW = parseFloat(dropZoneStyle.width);
-				dropZoneH = parseFloat(dropZoneStyle.height);
-				dropZoneX = parseFloat(dropZoneStyle.left);
-				dropZoneY = parseFloat(dropZoneStyle.top);
+				dropZoneW = parseInt(dropZoneStyle.width);
+				dropZoneH = parseInt(dropZoneStyle.height);
+				dropZoneX = parseInt(dropZoneStyle.left);
+				dropZoneY = parseInt(dropZoneStyle.top);
 			});
 
 			document.body.addEventListener("mouseup", function() {
@@ -62,6 +68,10 @@ define(function() {
 					dropZone.style.height = dropZoneH + plusY + "px";
 					dropZone.style.left = dropZoneX + plusX / 2 + "px";
 					dropZone.style.top = dropZoneY + plusY / 2 + "px";
+					P_MANAGER.set("au.drag_and_move"+"_"+prefid+".w", dropZoneW + plusX + "px");
+					P_MANAGER.set("au.drag_and_move"+"_"+prefid+".h", dropZoneH + plusY + "px");
+					P_MANAGER.set("au.drag_and_move"+"_"+prefid+".x", dropZoneX + plusX / 2 + "px");
+					P_MANAGER.set("au.drag_and_move"+"_"+prefid+".y", dropZoneY + plusY / 2 + "px");
 				}
 			});
 		}
@@ -79,8 +89,8 @@ define(function() {
 			if (dropZoneStyle.top === "auto") {
 				dropZone.style.top = 0;
 			}
-			dropZoneX = parseFloat(dropZoneStyle.left);
-			dropZoneY = parseFloat(dropZoneStyle.top);
+			dropZoneX = parseInt(dropZoneStyle.left);
+			dropZoneY = parseInt(dropZoneStyle.top);
 		});
 
 		document.body.addEventListener("mouseup", function() {
@@ -93,6 +103,8 @@ define(function() {
 				var plusY = e.clientY - y;
 				dropZone.style.left = dropZoneX + plusX + "px";
 				dropZone.style.top = dropZoneY + plusY + "px";
+				P_MANAGER.set("au.drag_and_move"+"_"+prefid+".x", dropZoneX + plusX + "px");
+				P_MANAGER.set("au.drag_and_move"+"_"+prefid+".y", dropZoneY + plusY + "px");
 			}
 		});
 	}
