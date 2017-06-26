@@ -7,6 +7,8 @@ define(function(require, exports, module) {
 		EditorManager = brackets.getModule("editor/EditorManager"),
 		KeyBindingManager = brackets.getModule("command/KeyBindingManager"),
 		CommandManager = brackets.getModule("command/CommandManager"),
+		Menus = brackets.getModule("command/Menus"),
+		ProjectContextMenu = Menus.getContextMenu(Menus.ContextMenuIds.PROJECT_MENU),
 		AppInit = brackets.getModule("utils/AppInit"),
 		ProjectManager = brackets.getModule("project/ProjectManager"),
 		FileSystem = brackets.getModule("filesystem/FileSystem"),
@@ -36,6 +38,45 @@ define(function(require, exports, module) {
 
 	CommandManager.register("Drop Includer(Browse: Relative Path)", commandID_browse_relative_path, openBrowse);
 	KeyBindingManager.addBinding(commandID_browse_relative_path, "Ctrl-Shift-Alt-.");
+
+	CommandManager.register("Insert Tag(Root Path)", "insert_tag_root_path", function() { contextMenuFunc({ root: true }); });
+	CommandManager.register("Insert Tag(Relative Path)", "insert_tag_relative_path", contextMenuFunc);
+
+
+	function addMenu(){
+		ProjectContextMenu.addMenuDivider();
+		ProjectContextMenu.addMenuItem("insert_tag_root_path", "");
+		ProjectContextMenu.addMenuItem("insert_tag_relative_path", "");
+	}
+
+
+	function contextMenuFunc(obj){
+		var root = false;
+		if (obj && obj.root === true) {
+			root = true;
+		}
+
+		currentDoc = DocumentManager.getCurrentDocument();
+		if (!currentDoc) {
+			return false;
+		}
+
+		editor = EditorManager.getCurrentFullEditor();
+		if (!editor) {
+			return false;
+		}
+
+		var docPath = currentDoc.file._parentPath;
+
+		var path = ProjectManager.getSelectedItem().fullPath;
+		path = path.replace(/\/$/, "");
+		var paths = [];
+		paths.push(path);
+
+		console.log(path);
+		forEachRun(editor, docPath, paths, root)
+	}
+
 
 	function openBrowse(obj) {
 		var root = false;
@@ -124,6 +165,8 @@ define(function(require, exports, module) {
 						//1ファイルで、さらにimgなら、改行つけない。
 					} else if (paths.length === 1 && relativeFilename.slice(0, 1) !== "<" && getMode(editor) === "html") {
 						//1ファイルで、タグじゃなくて、htmlモードなら、改行つけない。（pdfとかは改行したくないけどcssとかは改行したいので）
+					} else if (isDir(elm)){
+						//ディレクトリなら改行付けない。
 					} else {
 						editor.getSelections().forEach(function(elme, i) {
 							editor.document.replaceRange("\n", editor.getSelections()[i].start);
@@ -345,5 +388,6 @@ define(function(require, exports, module) {
 
 	AppInit.appReady(function() {
 		initDropDialog();
+		addMenu();
 	});
 });
