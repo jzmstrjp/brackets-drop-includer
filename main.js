@@ -73,8 +73,7 @@ define(function(require, exports, module) {
 		var paths = [];
 		paths.push(path);
 
-		console.log(path);
-		forEachRun(editor, docPath, paths, root)
+		forEachRun(editor, docPath, paths, root);
 	}
 
 
@@ -104,12 +103,10 @@ define(function(require, exports, module) {
 	}
 
 
-	function isDir(path){
-		var rtn;
+	function isDir(path, callback){
 		FileSystem.resolve(path, function(errorString, fileSystemEntry){
-			rtn = fileSystemEntry._isDirectory;
+			callback(fileSystemEntry._isDirectory);
 		});
-		return rtn;
 	}
 
 	function forEachRun(editor, docPath, paths, root) {
@@ -120,27 +117,32 @@ define(function(require, exports, module) {
 		if (paths.length > 1) { //ファイルが1個なら複数背景の必要なし。
 			multiBGI = true; //全部画像かどうか。デフォtrue。
 
-			paths.forEach(function(path) {
-				if (!/^(jpg|jpeg|png|gif|svg)$/.test(FileUtils.getFileExtension(path)) || isDir(path)) {
-					multiBGI = false; //1つでも画像拡張子じゃなければfalseに。または1つでもディレクトリならfalseに。
-				}
-			});
-
 			if (!cssLikeModeRegExp.test(getMode(editor))) {
 				multiBGI = false; //modeがcss系じゃなければfalseに。
 			}
+
+			paths.forEach(function(path) {
+				if (!/^(jpg|jpeg|png|gif|svg)$/.test(FileUtils.getFileExtension(path))) {
+					multiBGI = false; //1つでも画像拡張子じゃなければfalseに。
+				}
+			});
 		}
 
+
 		currentDoc.batchOperation(function() {
-			if (paths.length > 1 && selections.length === paths.length) {
+			if (paths.length > 1 && selections.length === paths.length) {//マルチカーソルで、数が一致してたら
 				var relativeFilenameArr = [];
-				paths.forEach(function(elm) {
+				paths.forEach(function(elm, i, arr) {
 					var relativeFilename = abspath2rel(docPath, elm, root);
-					relativeFilename = tagMaker(relativeFilename, root, editor, isDir(elm));
-					relativeFilenameArr.push(relativeFilename);
+					isDir(elm, function(isDir){
+						relativeFilename = tagMaker(relativeFilename, root, editor, isDir);
+						relativeFilenameArr.push(relativeFilename);
+						if(i === arr.length - 1){//最後だったら
+							one_by_one(relativeFilenameArr, selections);
+						}
+					});
 				});
-				one_by_one(relativeFilenameArr, selections);
-			} else if (multiBGI) {
+			} else if (multiBGI) {//複数背景モードだったら
 				var bgiTxt = 'background-image: url(';
 				paths.forEach(function(path, i, arr) {
 					bgiTxt += abspath2rel(docPath, path, root);
@@ -155,23 +157,24 @@ define(function(require, exports, module) {
 				editor.getSelections().forEach(function(sel, i) {
 					editor.document.replaceRange("\n", editor.getSelections()[i].start);
 				});
-			} else {
-				paths.forEach(function(elm) {
+			} else {//それ以外の本来の挙動
+				paths.forEach(function(elm, i, arr) {
 					var relativeFilename = abspath2rel(docPath, elm, root);
-					relativeFilename = tagMaker(relativeFilename, root, editor, isDir(elm));
-
-					doInsert({ text: relativeFilename });
-					if (paths.length === 1 && relativeFilename.slice(0, 4) === "<img") {
-						//1ファイルで、さらにimgなら、改行つけない。
-					} else if (paths.length === 1 && relativeFilename.slice(0, 1) !== "<" && getMode(editor) === "html") {
-						//1ファイルで、タグじゃなくて、htmlモードなら、改行つけない。（pdfとかは改行したくないけどcssとかは改行したいので）
-					} else if (isDir(elm)){
-						//ディレクトリなら改行付けない。
-					} else {
-						editor.getSelections().forEach(function(elme, i) {
-							editor.document.replaceRange("\n", editor.getSelections()[i].start);
-						});
-					}
+					isDir(elm, function(isDir){
+						relativeFilename = tagMaker(relativeFilename, root, editor, isDir);
+						doInsert({ text: relativeFilename });
+						if (paths.length === 1 && relativeFilename.slice(0, 4) === "<img") {
+							//1ファイルで、さらにimgなら、改行つけない。
+						} else if (paths.length === 1 && relativeFilename.slice(0, 1) !== "<" && getMode(editor) === "html") {
+							//1ファイルで、タグじゃなくて、htmlモードなら、改行つけない。（pdfとかは改行したくないけどcssとかは改行したいので）
+						} else if (isDir){
+							//ディレクトリなら改行付けない。
+						} else {
+							editor.getSelections().forEach(function(elme, i) {
+								editor.document.replaceRange("\n", editor.getSelections()[i].start);
+							});
+						}
+					});
 				});
 			}
 		});
@@ -204,7 +207,6 @@ define(function(require, exports, module) {
 
 	function _handleDrop(e) {
 		var root = false;
-		console.log(e.currentTarget.id);
 		if (e.currentTarget.id === "tagInserterRoot") {
 			root = true;
 		}
@@ -291,7 +293,6 @@ define(function(require, exports, module) {
 				break;
 			case "html":
 			case "php":
-			case "txt":
 				if (root) {
 					rtn = phpStart + 'include $_SERVER["DOCUMENT_ROOT"]."' + path + '";' + phpEnd;
 				} else {
