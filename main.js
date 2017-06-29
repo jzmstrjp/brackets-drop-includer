@@ -291,6 +291,7 @@ define(function(require, exports, module) {
 				break;
 			case "html":
 			case "php":
+			case "txt":
 				if (root) {
 					rtn = phpStart + 'include $_SERVER["DOCUMENT_ROOT"]."' + path + '";' + phpEnd;
 				} else {
