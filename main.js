@@ -274,6 +274,9 @@ define(function(require, exports, module) {
 					rtn = '<img src="' + path + '" alt="xxxxx">';
 				}
 				break;
+			case "pdf":
+				rtn = '<a href="' + path + '" target="_blank">PDF_TITLE</a>';
+				break;
 			case "css":
 			case "scss":
 			case "less":
