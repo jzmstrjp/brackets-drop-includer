@@ -299,7 +299,7 @@ define(function(require, exports, module) {
 				if (root) {
 					rtn = phpStart + 'include $_SERVER["DOCUMENT_ROOT"]."' + path + '";' + phpEnd;
 				} else {
-					rtn = phpStart + 'include dirname(__FILE__)."/' + path + '";' + phpEnd;
+					rtn = phpStart + 'include dirname(__FILE__)."/' + path.replace(/^\.\//, "") + '";' + phpEnd;
 				}
 				break;
 			default:

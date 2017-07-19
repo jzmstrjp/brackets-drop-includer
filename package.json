@@ -1,9 +1,9 @@
 {
   "name": "brackets-drop-includer",
   "title": "[Browse...](or Drag & Drop)",
-  "description": ">>>UPDATE INFO: You can now insert tags by right-clicking from the file list.<<< You can insert tag(s) from [Browse...] with shortcut key -- [ Ctrl(Cmd)-Shift-. (Root Path) ] or [ Ctrl(Cmd)-Shift-Alt-. (Relative Path)] --. This extension inserts tag(s) automatically (link tag, img tag, script tag, css @import, or php include statement). It also be able to open files from modal window. Please press shortcut key [ Ctrl(Cmd)-. ], and drag and drop some files into the modal window.",
+  "description": "You can insert tag(s) from [Browse...] or modal window, or right-clicking. And suitable tag will be inserted automatically (link tag, img tag, script tag, css @import, or php include statement).",
   "homepage": "https://github.com/jzmstrjp/brackets-drop-includer",
-  "version": "1.2.9",
+  "version": "1.3.0",
   "keywords": [
     "file",
     "include",
@@ -22,7 +22,7 @@
   ],
   "package-i18n": {
     "ja": {
-      "description": "【更新情報：ファイル一覧から右クリックでタグを挿入できるようになりました（Insert Tag）】  「参照...」からファイルを選択して、ファイルに応じたタグを挿入します（linkタグ、scriptタグ、imgタグ、cssの@import文、phpのinclude文など）。ルートパスにしたい場合は「Ctrl(Cmd) + Shift + .」、相対パスがよければ「Ctrl(Cmd) + Shift + Alt + .」です。「Ctrl(Cmd) + .」キーでモーダルウィンドウを開いて、そこにファイルをドラッグ&ドロップして開くことも出来ます。",
+      "description": "「参照...」からファイルを選択すると、文脈に応じたタグを挿入します（linkタグ、scriptタグ、imgタグ、cssの@import文、phpのinclude文など）。モーダルウィンドウや右クリック（Insert Tag）でも使用可能です。",
       "title": "ファイル参照し太郎（ドラッグ&ドロップも可）"
     }
   }
