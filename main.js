@@ -13,9 +13,11 @@ define(function(require, exports, module) {
 		ProjectManager = brackets.getModule("project/ProjectManager"),
 		FileSystem = brackets.getModule("filesystem/FileSystem"),
 		FileUtils = brackets.getModule("file/FileUtils"),
+		editorContextMenu = Menus.getContextMenu(Menus.ContextMenuIds.EDITOR_MENU),
 		ExtensionUtils = brackets.getModule("utils/ExtensionUtils");
 
 	var DRAG_AND_MOVE = require("drag_and_move");
+	
 
 	var dropZone;
 
@@ -30,14 +32,9 @@ define(function(require, exports, module) {
 
 	ExtensionUtils.loadStyleSheet(module, "main.less");
 
-	CommandManager.register("Open Drop Includer", commandID_modal, openDialog);
-	KeyBindingManager.addBinding(commandID_modal, "Ctrl-.");
-
-	CommandManager.register("Drop Includer(Browse: Root Path)", commandID_browse_root_path, function() { openBrowse({ root: true }); });
-	KeyBindingManager.addBinding(commandID_browse_root_path, "Ctrl-Shift-.");
-
-	CommandManager.register("Drop Includer(Browse: Relative Path)", commandID_browse_relative_path, openBrowse);
-	KeyBindingManager.addBinding(commandID_browse_relative_path, "Ctrl-Shift-Alt-.");
+	CommandManager.register("Browse...(Root Path)", commandID_browse_root_path, function() { openBrowse({ root: true }); });
+	CommandManager.register("Browse...(Relative Path)", commandID_browse_relative_path, openBrowse);
+	CommandManager.register("Browse...(Modal Window)", commandID_modal, openDialog);
 
 	CommandManager.register("Insert Tag(Root Path)", "insert_tag_root_path", function() { contextMenuFunc({ root: true }); });
 	CommandManager.register("Insert Tag(Relative Path)", "insert_tag_relative_path", contextMenuFunc);
@@ -47,6 +44,11 @@ define(function(require, exports, module) {
 		ProjectContextMenu.addMenuDivider();
 		ProjectContextMenu.addMenuItem("insert_tag_root_path", "");
 		ProjectContextMenu.addMenuItem("insert_tag_relative_path", "");
+		editorContextMenu.addMenuDivider();
+		editorContextMenu.addMenuItem(commandID_browse_root_path, "Ctrl-Shift-.");
+		editorContextMenu.addMenuItem(commandID_browse_relative_path, "Ctrl-Shift-Alt-.");
+		editorContextMenu.addMenuItem(commandID_modal, "Ctrl-.");
+		editorContextMenu.addMenuDivider();
 	}
 
 
@@ -158,7 +160,7 @@ define(function(require, exports, module) {
 					editor.document.replaceRange("\n", editor.getSelections()[i].start);
 				});
 			} else {//それ以外の本来の挙動
-				paths.forEach(function(elm, i, arr) {
+				paths.forEach(function(elm/*  , i, arr  */) {
 					var relativeFilename = abspath2rel(docPath, elm, root);
 					isDir(elm, function(isDir){
 						relativeFilename = tagMaker(relativeFilename, root, editor, isDir);
